@@ -9,78 +9,63 @@ import (
 )
 
 var (
-	name   string
-	hora   int
-	minuto int
-	count  int
-	total  int
-)
+	total float64
+	totalHours int
+	totalMinutes int
+) 
 
 func main() {
-
-	scanner := bufio.NewScanner(os.Stdin) //cria um scanner
-
 	fmt.Printf("Bem vindo ao Manager Tasks! Digite quantas tasks você quer criar:\n")
-	if scanner.Scan() {
-		countTotal := scanner.Text()
-		count, _ = strconv.Atoi(countTotal)
 
-		for i := 0; i <= count-1; i++ {
-			fmt.Printf("Digite o nome da %d task: ", i+1)
-			if scanner.Scan() {
-				name = scanner.Text()
-			}
+	scanner := bufio.NewScanner(os.Stdin) 
+	scanner.Scan()
+	countInput := scanner.Text()
 
-			fmt.Println("Digite o tempo parcial de duração da task: digite o total de horas, seguindo por um espaço em branco, digite os minutos. ")
-			if scanner.Scan() {
-				totalHora := scanner.Text()
-				//divide em 2 atraves dos espacos em branco
-				valores := strings.Split(totalHora, " ")
+	count, err := strconv.Atoi(countInput)
+	if err != nil {
+		panic(err)
+	}
 
-				if len(valores) != 2 {
-					fmt.Println("Por favor, insira exatamente dois valores separados por espaço. ")
-					return
-				}
+	for i := 0; i < count; i++ {
+		fmt.Printf("Digite o nome da task %d: ", i+1)
+		scanner.Scan()
+		taskName := scanner.Text()
+		
+		fmt.Println("Digite o tempo parcial de duração da task: digite o total de horas, seguindo por um espaço em branco, digite os minutos. ")
+		scanner.Scan()
+		hour := scanner.Text()
+		
+		splitHourMinutes := strings.Split(hour, " ")
 
-				//valida e atribui os valores
-				_, err1 := fmt.Sscanf(valores[0], "%d", &hora)
-				_, err2 := fmt.Sscanf(valores[1], "%d", &minuto)
-
-				if hora < 0 || minuto > 60 || minuto < 0 {
-					fmt.Println("Por favor, insira um valor válido para hora. ")
-					return
-				}
-
-				//converter string para int
-				horaemInt, _ := strconv.Atoi(valores[0])
-				minemInt, _ := strconv.Atoi(valores[1])
-
-				// Concatenar os dois números como uma string
-				strHour := strconv.Itoa(horaemInt) + "." + strconv.Itoa(minemInt)
-				// Converter string concatenada em float
-				horaMaisMin, _ := strconv.ParseFloat(strHour, 64)
-
-				//soma o total
-				total += int(horaMaisMin)
-
-				//valida o erro
-				if err1 != nil || err2 != nil {
-					fmt.Println("Por favor, insira dois valores válidos. ")
-					return
-				}
-
-				fmt.Printf("A %vª task: %v, demorará em torno de %v hora's e %v minuto's\n", i+1, name, hora, minuto)
-
-				if count-1 == i && count > 1 {
-					//total
-					println("O tempo total é de: ", total, " horas")
-				}
-			}
+		if len(splitHourMinutes) != 2 {
+			fmt.Println("Por favor, insira exatamente dois valores separados por espaço. ")
+			return
 		}
+
+		var splitedHour, splitedMinute int
+		_, err1 := fmt.Sscanf(splitHourMinutes[0], "%d", &splitedHour)
+		_, err2 := fmt.Sscanf(splitHourMinutes[1], "%d", &splitedMinute)
+
+		if err1 != nil || err2 != nil {
+			fmt.Println("Por favor, insira dois valores válidos. ")
+			return
+		}
+		
+		if splitedHour < 0 || splitedMinute >= 60 || splitedMinute < 0 {
+			fmt.Println("Por favor, insira um valor válido para hora. ")
+			return
+		}
+
+		totalHours += splitedHour
+		totalMinutes += splitedMinute
+
+		fmt.Printf("A %vª task: %v, demorará em torno de %v hora's e %v minuto's\n", i+1, taskName, totalHours, totalMinutes)
+
 	}
 
-	if err := scanner.Err(); err != nil {
-		fmt.Fprintln(os.Stderr, "Erro ao ler a entrada:", err)
-	}
+	extraHours := totalMinutes / 60
+	totalHours += extraHours
+	totalMinutes %= 60
 
+	fmt.Printf("O tempo total é de: %d horas e %d minutos\n", totalHours, totalMinutes)
 }
