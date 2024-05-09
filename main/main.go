@@ -27,11 +27,11 @@ func main() {
 	}
 
 	for i := 0; i < count; i++ {
-		fmt.Printf("Digite o nome da task %d: ", i+1)
+		fmt.Printf("Digite o nome da %dª task : ", i+1)
 		scanner.Scan()
 		taskName := scanner.Text()
 		
-		fmt.Println("Digite o tempo parcial de duração da task: digite o total de horas, seguindo por um espaço em branco, digite os minutos. ")
+		fmt.Println("Digite o tempo parcial de duração da task:\n(digite o total de horas, seguindo por um espaço em branco, digite os minutos) ")
 		scanner.Scan()
 		hour := scanner.Text()
 		
@@ -59,7 +59,7 @@ func main() {
 		totalHours += splitedHour
 		totalMinutes += splitedMinute
 
-		fmt.Printf("A %vª task: %v, demorará em torno de %v hora's e %v minuto's\n", i+1, taskName, totalHours, totalMinutes)
+		fmt.Printf("A %vª task: %v, foi computada.\n", i+1, taskName)
 
 	}
 
